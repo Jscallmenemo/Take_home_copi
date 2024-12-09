@@ -1,4 +1,4 @@
-# Take_home
+# Take Home
 ## Kelompok BISMILLAH COBA-COBA
 
 Take Home adalah sebuah aplikasi E-commerce yang dikembangkan oleh mahasiswa Teknik Komputer Universitas Amikom Yogyakarta sebagai bagian dari tugas proyek akhir dalam mata kuliah Cloud Computing.
