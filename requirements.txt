@@ -1,4 +1,4 @@
-Flask
+flask
 Flask-Mail
 mysql-connector-python
 google-auth
