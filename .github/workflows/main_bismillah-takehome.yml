@@ -66,4 +66,4 @@ jobs:
         with:
           app-name: 'BISMILLAH-takehome'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B706845FEDED42F28BFC1716CC58F810 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_20C75B0CEE174746A10862B94D0CDE0C }}
