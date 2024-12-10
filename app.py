@@ -49,10 +49,10 @@ app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
 
 # Database connection
 db = connector.connect(
-    user="bismillahtakehome", password="W6ALd+AV[_ogEu9", host="bismillah.mysql.database.azure.com", port=3306, database="ecommerce"
+    user="bismillahtakehome", password="W6ALd+AV[_ogEu9", host="takehome.mysql.database.azure.com", port=3306, database="ecommerce"
 )
 db_config = {
-    user="bismillahtakehome", password="W6ALd+AV[_ogEu9", host="bismillah.mysql.database.azure.com", port=3306, database="ecommerce"
+    user="bismillahtakehome", password="W6ALd+AV[_ogEu9", host="takehome.mysql.database.azure.com", port=3306, database="ecommerce"
 }
 
 cursor = db.cursor(dictionary=True)
