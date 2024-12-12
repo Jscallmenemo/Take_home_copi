@@ -47,15 +47,17 @@ def format_rupiah(value):
 
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
 
-# Database connection
-db = connector.connect(
-    user="bismillahtakehome", password="W6ALd+AV[_ogEu9", host="takehome.mysql.database.azure.com", port=3306, database="ecommerce"
-)
 db_config = {
-    user="bismillahtakehome", password="W6ALd+AV[_ogEu9", host="takehome.mysql.database.azure.com", port=3306, database="ecommerce"
+    'host': 'takehome.mysql.database.azure.com',
+    'user': 'bismillahtakehome',
+    'password': 'W6ALd+AV[_ogEu9',  # Ganti dengan password Anda
+    'database': 'ecommerce',         # Ganti dengan nama database Anda
+    'port': 3306,
 }
 
+db = connector.connect(**db_config)
 cursor = db.cursor(dictionary=True)
+
 
 # Flask Mail setup
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
