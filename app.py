@@ -36,8 +36,8 @@ socketio = SocketIO(app)
 
 load_dotenv()
 
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+# TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+# TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
 MIDTRANS_SERVER_KEY = os.getenv('MIDTRANS_SERVER_KEY')
 MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
@@ -122,10 +122,10 @@ UPLOAD_FOLDER = 'static/uploads/profile_pics'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-TWILIO_PHONE_NUMBER_WHATSAPP = 'whatsapp:+14155238886'  # Nomor WhatsApp Sandbox Twilio
-WHATSAPP_CONTENT_SID = 'HX229f5a04fd0510ce1b071852155d3e75'
+# TWILIO_PHONE_NUMBER_WHATSAPP = 'whatsapp:+14155238886'  # Nomor WhatsApp Sandbox Twilio
+# WHATSAPP_CONTENT_SID = 'HX229f5a04fd0510ce1b071852155d3e75'
 
-client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+# client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 def format_phone_number(phone_number):
     # Pastikan nomor dimulai dengan +62 untuk Indonesia
@@ -460,29 +460,29 @@ def dashboard_buyer():
     )
 
 
-@app.route('/send_otp', methods=['POST'])
-def send_otp():
-    data = request.get_json()
-    nomer_hp = data.get('nomer_hp')
-    method = data.get('method', 'whatsapp')  # Default WhatsApp
+# @app.route('/send_otp', methods=['POST'])
+# def send_otp():
+#     data = request.get_json()
+#     nomer_hp = data.get('nomer_hp')
+#     method = data.get('method', 'whatsapp')  # Default WhatsApp
 
-    if not nomer_hp or not nomer_hp.startswith('+'):
-        return jsonify({"success": False, "message": "Nomor HP harus valid dan dimulai dengan '+'."})
+#     if not nomer_hp or not nomer_hp.startswith('+'):
+#         return jsonify({"success": False, "message": "Nomor HP harus valid dan dimulai dengan '+'."})
 
-    otp_code = random.randint(100000, 999999)
-    session['otp'] = otp_code
+#     otp_code = random.randint(100000, 999999)
+#     session['otp'] = otp_code
 
-    try:
-        # Hanya mendukung WhatsApp
-        message = client.messages.create(
-            from_=TWILIO_PHONE_NUMBER_WHATSAPP,
-            to=f'whatsapp:{nomer_hp}',
-            body=f"Kode OTP Anda adalah {otp_code}. Jangan bagikan kode ini kepada siapa pun."
-        )
+#     try:
+#         # Hanya mendukung WhatsApp
+#         message = client.messages.create(
+#             from_=TWILIO_PHONE_NUMBER_WHATSAPP,
+#             to=f'whatsapp:{nomer_hp}',
+#             body=f"Kode OTP Anda adalah {otp_code}. Jangan bagikan kode ini kepada siapa pun."
+#         )
 
-        return jsonify({"success": True, "message": "OTP berhasil dikirim."})
-    except Exception as e:
-        return jsonify({"success": False, "message": f"Gagal mengirim OTP: {str(e)}"})
+#         return jsonify({"success": True, "message": "OTP berhasil dikirim."})
+#     except Exception as e:
+#         return jsonify({"success": False, "message": f"Gagal mengirim OTP: {str(e)}"})
 
 
 @app.route('/verify_otp', methods=['POST'])
