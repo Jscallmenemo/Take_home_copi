@@ -5,7 +5,7 @@ import secrets
 import bcrypt
 from flask_mail import Mail, Message
 import mysql.connector as connector
-from flask import Flask, render_template, redirect, url_for, request, session, flash, abort, make_response
+from flask import Flask, render_template, redirect, url_for, request, session, flash, abort, make_response, g
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 import google.auth.transport.requests
@@ -34,6 +34,13 @@ app = Flask(__name__)
 app.secret_key = 'TakeHome'
 socketio = SocketIO(app)
 
+load_dotenv()
+
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN')
+MIDTRANS_SERVER_KEY = os.getenv('MIDTRANS_SERVER_KEY')
+MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+
 # Set locale untuk memastikan format angka sesuai dengan Indonesia
 locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
 
@@ -44,8 +51,6 @@ def format_rupiah(value):
     except (ValueError, TypeError):
         return value
 
-
-app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')
 
 db_config = {
     'host': 'takehome.mysql.database.azure.com',
@@ -58,6 +63,23 @@ db_config = {
 db = connector.connect(**db_config)
 cursor = db.cursor(dictionary=True)
 
+# Tambahkan ini setelah konfigurasi connection
+def get_db_connection():
+    if not hasattr(g, 'mysql_connection'):
+        g.mysql_connection = mysql.connector.connect(
+            host='takehome.mysql.database.azure.com',
+            user='bismillahtakehome',
+            password='W6ALd+AV[_ogEu9',
+            database='ecommerce',
+            port=3306
+        )
+    return g.mysql_connection
+
+@app.teardown_appcontext
+def close_db_connection(exception):
+    connection = getattr(g, 'mysql_connection', None)
+    if connection is not None:
+        connection.close()
 
 # Flask Mail setup
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -65,7 +87,6 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 app.config['MAIL_USERNAME'] = 'takehome6993@gmail.com'
-app.config['MAIL_PASSWORD'] = 'wqgv olhl szsd nteu'
 app.config['MAIL_DEFAULT_SENDER'] = 'TAKE HOME'
 mail = Mail(app)
 
@@ -90,8 +111,8 @@ def login_is_required(function):
     return wrapper
 
 
-UPLOAD_FOLDER = 'static/profile_pics'  # Folder tempat menyimpan foto
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}  # Ekstensi file yang diperbolehkan
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads', 'profile_pics')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Fungsi untuk memeriksa ekstensi file yang valid
 def allowed_file(filename):
@@ -101,9 +122,6 @@ UPLOAD_FOLDER = 'static/uploads/profile_pics'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Konfigurasi Twilio
-TWILIO_ACCOUNT_SID = 'ACfc53fdff4237adcbdb8bf344807bfe09'
-TWILIO_AUTH_TOKEN = '0c523ee090bf38c350d2a38f1d45ad80'
 TWILIO_PHONE_NUMBER_WHATSAPP = 'whatsapp:+14155238886'  # Nomor WhatsApp Sandbox Twilio
 WHATSAPP_CONTENT_SID = 'HX229f5a04fd0510ce1b071852155d3e75'
 
@@ -120,15 +138,7 @@ def format_phone_number(phone_number):
         return phone_number
     return None
 
-@app.template_filter('rupiah')
-def rupiah(value):
-    try:
-        return 'Rp {:,.2f}'.format(value)
-    except (ValueError, TypeError):
-        return value
-
 # Konfigurasi Midtrans
-MIDTRANS_SERVER_KEY = 'SB-Mid-server-lIGAMq61azdQQ8fP5nz38zWS'
 MIDTRANS_CLIENT_KEY = 'SB-Mid-client-pNHI-sG8bPdq2_9l'
 
 snap = midtransclient.Snap(
@@ -150,10 +160,11 @@ def generate_unique_code(length):
     return code
 
 @app.template_filter('date')
-def format_date(value, format='%H:%M'):
+def format_date(value, format='%Y-%m-%d %H:%M:%S'):
     if isinstance(value, datetime):
         return value.strftime(format)
     return value
+
 
 @app.route('/')
 def index():
