@@ -42,7 +42,7 @@ MIDTRANS_SERVER_KEY = os.getenv('MIDTRANS_SERVER_KEY')
 MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
 
 # Set locale untuk memastikan format angka sesuai dengan Indonesia
-locale.setlocale(locale.LC_ALL, 'id_ID.UTF-8')
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')  # Atau locale lain yang didukung
 
 @app.template_filter('format_rupiah')
 def format_rupiah(value):
@@ -2042,4 +2042,5 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8000)
+
